@@ -1,0 +1,89 @@
+<div class="container">
+
+  <header class="header">
+    <h1>VELGURU Tech</h1>
+    <p>Appointment Management System</p>
+  </header>
+
+  <section class="card">
+    <h2>Book Appointment</h2>
+
+    <form (ngSubmit)="bookAppointment()">
+
+      <div class="form-group">
+        <label>Patient Name</label>
+        <input
+          type="text"
+          [(ngModel)]="appointment.patientName"
+          name="patientName"
+          placeholder="Enter patient name"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label>Doctor Name</label>
+        <input
+          type="text"
+          [(ngModel)]="appointment.doctorName"
+          name="doctorName"
+          placeholder="Enter doctor name"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label>Appointment Date</label>
+        <input
+          type="date"
+          [(ngModel)]="appointment.appointmentDate"
+          name="appointmentDate"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <select [(ngModel)]="appointment.status" name="status">
+          <option value="BOOKED">BOOKED</option>
+          <option value="CANCELLED">CANCELLED</option>
+          <option value="COMPLETED">COMPLETED</option>
+        </select>
+      </div>
+
+      <button type="submit">Book Appointment</button>
+
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Appointments</h2>
+
+    <table *ngIf="appointments.length > 0">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let item of appointments">
+          <td>{{ item.id }}</td>
+          <td>{{ item.patientName }}</td>
+          <td>{{ item.doctorName }}</td>
+          <td>{{ item.appointmentDate }}</td>
+          <td>{{ item.status }}</td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <p *ngIf="appointments.length === 0">
+      No appointments found.
+    </p>
+
+  </section>
+
+</div>
