@@ -1,0 +1,42 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: velguru-postgres
+    environment:
+      POSTGRES_DB: velgurudb
+      POSTGRES_USER: velguru
+      POSTGRES_PASSWORD: velguru123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/backend/Dockerfile
+    container_name: velguru-backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: velgurudb
+      DB_USERNAME: velguru
+      DB_PASSWORD: velguru123
+    ports:
+      - "8082:8080"
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/frontend/Dockerfile
+    container_name: velguru-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

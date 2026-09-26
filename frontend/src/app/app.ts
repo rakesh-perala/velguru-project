@@ -27,7 +27,7 @@ export class App implements OnInit {
     status: 'BOOKED'
   };
 
-  private apiUrl = 'http://localhost:8080/api/appointments';
+  private apiUrl = '/api/appointments';
 
   constructor(private http: HttpClient) {}
 
