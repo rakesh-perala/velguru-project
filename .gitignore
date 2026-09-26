@@ -1,0 +1,30 @@
+# Maven build files
+**/target/
+
+# Java
+*.class
+
+# Node / Angular
+**/node_modules/
+**/dist/
+
+# Angular cache
+.angular/
+
+# Environment files
+.env
+.env.*
+
+# IDE files
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
