@@ -21,6 +21,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "jenkins" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.jenkins_instance_type
+  iam_instance_profile   = "velguru"
   subnet_id              = module.vpc.public_subnet_ids[0]
   vpc_security_group_ids = [aws_security_group.jenkins.id]
   key_name               = var.jenkins_key_name
@@ -81,17 +82,20 @@ resource "aws_instance" "jenkins" {
 
     # Keep Java 21 as the system default.
     # Jenkins controller will run using Java 21.
+
     update-alternatives --install /usr/bin/java java "$JAVA21_HOME/bin/java" 2121
     update-alternatives --install /usr/bin/java java "$JAVA17_HOME/bin/java" 1717
 
+    update-alternatives --install /usr/bin/javac javac "$JAVA21_HOME/bin/javac" 2121
     update-alternatives --install /usr/bin/javac javac "$JAVA17_HOME/bin/javac" 1717
 
     update-alternatives --set java "$JAVA21_HOME/bin/java"
-    update-alternatives --set javac "$JAVA17_HOME/bin/javac"
+    update-alternatives --set javac "$JAVA21_HOME/bin/javac"
 
     # ============================================================
     # SYSTEM-WIDE JAVA ENVIRONMENT
     # ============================================================
+
 
     echo "===== Configuring Java environment ====="
 
