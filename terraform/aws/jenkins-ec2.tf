@@ -21,10 +21,10 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "jenkins" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.jenkins_instance_type
-  iam_instance_profile   = "velguru"
   subnet_id              = module.vpc.public_subnet_ids[0]
   vpc_security_group_ids = [aws_security_group.jenkins.id]
   key_name               = var.jenkins_key_name
+  iam_instance_profile   = "velguru"
 
   associate_public_ip_address = true
   user_data_replace_on_change = true
@@ -62,9 +62,38 @@ resource "aws_instance" "jenkins" {
       git \
       unzip \
       fontconfig \
-      openjdk-21-jre \
+      openjdk-21-jdk \
       openjdk-17-jdk \
       maven
+
+    # ============================================================
+    # AWS CLI INSTALLATION
+    # ============================================================
+
+    echo "===== Installing AWS CLI ====="
+
+    curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+    rm -rf /tmp/aws
+    unzip -q /tmp/awscliv2.zip -d /tmp
+    /tmp/aws/install --update
+    rm -rf /tmp/aws /tmp/awscliv2.zip
+
+    echo "--- AWS CLI ---"
+    aws --version
+
+    # ============================================================
+    # KUBECTL INSTALLATION
+    # ============================================================
+
+    echo "===== Installing kubectl ====="
+
+    curl -fsSL -o /usr/local/bin/kubectl \
+      https://dl.k8s.io/release/v1.37.1/bin/linux/amd64/kubectl
+
+    chmod +x /usr/local/bin/kubectl
+
+    echo "--- kubectl ---"
+    kubectl version --client
 
     # ============================================================
     # JAVA CONFIGURATION
@@ -82,12 +111,10 @@ resource "aws_instance" "jenkins" {
 
     # Keep Java 21 as the system default.
     # Jenkins controller will run using Java 21.
-
     update-alternatives --install /usr/bin/java java "$JAVA21_HOME/bin/java" 2121
     update-alternatives --install /usr/bin/java java "$JAVA17_HOME/bin/java" 1717
 
     update-alternatives --install /usr/bin/javac javac "$JAVA21_HOME/bin/javac" 2121
-    update-alternatives --install /usr/bin/javac javac "$JAVA17_HOME/bin/javac" 1717
 
     update-alternatives --set java "$JAVA21_HOME/bin/java"
     update-alternatives --set javac "$JAVA21_HOME/bin/javac"
@@ -95,7 +122,6 @@ resource "aws_instance" "jenkins" {
     # ============================================================
     # SYSTEM-WIDE JAVA ENVIRONMENT
     # ============================================================
-
 
     echo "===== Configuring Java environment ====="
 
