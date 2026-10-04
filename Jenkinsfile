@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -8,8 +9,8 @@ pipeline {
 
     environment {
         AWS_REGION = 'ap-south-2'
-        ECR_REPOSITORY = 'velguru-backend'
         AWS_ACCOUNT_ID = '652310866649'
+        ECR_REPOSITORY = 'velguru-backend'
         ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPOSITORY}"
     }
@@ -51,14 +52,14 @@ pipeline {
             steps {
                 script {
                     env.IMAGE_TAG = "build-${env.BUILD_NUMBER}-${env.GIT_SHORT_COMMIT}"
-
-                    sh """
-                        docker build \
-                          -f docker/backend/Dockerfile \
-                          -t ${IMAGE_NAME}:${IMAGE_TAG} \
-                          .
-                    """
                 }
+
+                sh """
+                    docker build \
+                      -f docker/backend/Dockerfile \
+                      -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                      backend
+                """
 
                 echo "Docker Image: ${IMAGE_NAME}:${IMAGE_TAG}"
             }
